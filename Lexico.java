@@ -51,7 +51,7 @@ public class Lexico {
         int[] digitos = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         String apertura = "{"; // los que son solo 1 cosa... lo sigo manejando
         char[] cierre = { '}', ';' }; // como una matriz ?? o como en estados?
-        char[] continuacion = { '.', ',' };
+        char[] continuacion = { '.' };
         char[] gramaticales = { '[', ']', '(', ')', '<', '>' };
         char[] matematicos = { '+', '-', '*', '/', '%', '=' };
 
@@ -71,6 +71,7 @@ public class Lexico {
 
         if (Palabras[0].equals(apertura)) {
             int i = 0;
+            System.out.println("1");
             while (i < Palabras.length) {
                 if (Palabras[0].equals(apertura)) {
                     i++;
@@ -78,7 +79,7 @@ public class Lexico {
                     return false;
                 }
 
-                if (Palabras[i].equals(PR[0])) { // Import
+                if (Palabras[1].equals(PR[0])) { // Import{}
                     i++;
                     if (i >= Palabras.length || !validarIde(Palabras[i])) {
                         return false;
@@ -98,7 +99,7 @@ public class Lexico {
                             }
                             i++;
                         } else {
-                            return false; 
+                            return false;
                         }
                     }
 
@@ -120,7 +121,8 @@ public class Lexico {
                 }
                 return esValido;
             }
-        }else{
+        } else {
+            System.out.println("Error");
             return false;
         }
         return esValido;
