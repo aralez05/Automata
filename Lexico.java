@@ -69,63 +69,75 @@ public class Lexico {
         String Exist = "Exist";
         boolean esValido = true;
 
-        if (Palabras[0].equals(apertura)) {
-            int i = 0;
-            System.out.println("1");
-            while (i < Palabras.length) {
-                if (Palabras[0].equals(apertura)) {
-                    i++;
-                } else {
+        int i = 0;
+        while (i < Palabras.length) {
+            String palabraActual = Palabras[i];
+            if (palabraActual.equals(apertura)) {
+                i++;
+                System.out.println("01 Apertura TK01");
+                continue;
+            }
+
+            if (palabraActual.equals(PR[0])) { // Import
+                i++;
+                System.out.println("02 Import TK02");
+                if (i >= Palabras.length || !validarIde(Palabras[i])) {
+                    System.out.println("Error");
                     return false;
                 }
-
-                if (Palabras[1].equals(PR[0])) { // Import{}
-                    i++;
-                    if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                        return false;
-                    }
-                    i++;
-                    while (i < Palabras.length) {
-                        String actual = Palabras[i];
-                        if (actual.equals(String.valueOf(cierre[1]))) {
-                            i++;
-                            break;
-                        }
-                        if (actual.equals(String.valueOf(continuacion[0]))
-                                || actual.equals(String.valueOf(continuacion[1]))) {
-                            i++;
-                            if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                                return false;
-                            }
-                            i++;
-                        } else {
+                System.out.println("05 Identificador TK05");
+                i++;
+                while (i < Palabras.length) {
+                    String actual = Palabras[i];
+                    if (actual.equals(String.valueOf(cierre[1]))) { // ';'
+                        i++;
+                        System.out.println("03 Cierre TK03");
+                        break;
+                    } else if (actual.equals(String.valueOf(continuacion[0]))) { // '.'
+                        i++;
+                        System.out.println("04 Continuacion TK04");
+                        if (i >= Palabras.length || !validarIde(Palabras[i])) {
+                            System.out.println("Error");
                             return false;
                         }
-                    }
-
-                } else if (Arrays.asList(Palabras).contains(estado[0]) || Arrays.asList(Palabras).contains(estado[1])) {// Estados
-                    i++;
-                    if (Arrays.asList(Palabras).contains(PR[1])) {
-                    } else if (Arrays.asList(Palabras).contains(letraMin[i])
-                            || Arrays.asList(Palabras).contains(letraMay[i])) {
+                        System.out.println("05 Identificador TK05");
                         i++;
-                        if (Arrays.asList(Palabras).contains(digitos[i])) {
-                            return true;
-                        }
+                    } else {
+                        System.out.println("Error: Caracter inesperado en Import: " + actual);
+                        return false;
                     }
                 }
-                if (Arrays.asList(Palabras).contains(PR[1])) {
-                    esValido = true;
-                } else {
-                    esValido = false;
-                }
-                return esValido;
+                continue;
             }
-        } else {
-            System.out.println("Error");
-            return false;
+            if (palabraActual.equals(estado[0]) || palabraActual.equals(estado[1])) { // Estados
+                i++;
+                System.out.println("06 Estado TK06");
+                continue;
+            }
+            while (i < Palabras.length) {
+                String actual = Palabras[i];
+                if (actual.equals(estadoInstancia[0])) {
+                    i++;
+                    System.out.println("07 Estado Instancia TK07");
+                } else if (actual.equals(TR[0]) || actual.equals(TR[1]) || actual.equals(TR[2]) || actual.equals(TR[3])
+                        || actual.equals(TR[4]) || actual.equals(TR[5])) {
+                    i++;
+                    System.out.println("08 Tipo de retorno TK08");
+                    if (i >= Palabras.length || !validarIde(Palabras[i])) {
+                        System.out.println("Error");
+                        return false;
+                    } else {
+                        System.out.println("05 Identificador TK05");
+                        i++;
+                    } // Aqui antigravity me esta hacido SPOILERS, pero no entiendo poruqe quiere
+                      // poner le puto if aqui
+                } else {
+                    break;
+                }
+            }
+            i++;
         }
-        return esValido;
+        return true;
     }
 
     private static boolean validarIde(String palabra) {
