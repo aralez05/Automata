@@ -52,90 +52,80 @@ public class Lexico {
         String apertura = "{"; // los que son solo 1 cosa... lo sigo manejando
         char[] cierre = { '}', ';' }; // como una matriz ?? o como en estados?
         char[] continuacion = { '.' };
-        char[] gramaticales = { '[', ']', '(', ')', '<', '>' };
-        char[] matematicos = { '+', '-', '*', '/', '%', '=' };
 
         // Palabras Reservadas
         String[] PR = { "Import", "Class", "Main", "New" };
         // Tipo de retorno
-        String[] TR = { "Int", "String", "Double", "Char", "Boolean", "Void" };
 
         // Estados
         String[] estado = { "Public", "Private" };
-        String[] estadoInstancia = { "Static" };
-        // Condicionales
-        String If = "If";
-        String Else = "Else";
-        String Exist = "Exist";
-        boolean esValido = true;
 
-        int i = 0;
-        while (i < Palabras.length) {
-            String palabraActual = Palabras[i];
+        for (int i = 0; i < Palabras.length; i++) {
+            String palabraActual = Palabras[i].trim();
+            if (palabraActual.isEmpty())
+                continue;
+
+            // 1. Simbolos y Delimitadores
             if (palabraActual.equals(apertura)) {
-                i++;
                 System.out.println("01 Apertura TK01");
                 continue;
             }
-
-            if (palabraActual.equals(PR[0])) { // Import
-                i++;
-                System.out.println("02 Import TK02");
-                if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                    System.out.println("Error");
-                    return false;
-                }
-                System.out.println("05 Identificador TK05");
-                i++;
-                while (i < Palabras.length) {
-                    String actual = Palabras[i];
-                    if (actual.equals(String.valueOf(cierre[1]))) { // ';'
-                        i++;
-                        System.out.println("03 Cierre TK03");
-                        break;
-                    } else if (actual.equals(String.valueOf(continuacion[0]))) { // '.'
-                        i++;
-                        System.out.println("04 Continuacion TK04");
-                        if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                            System.out.println("Error");
-                            return false;
-                        }
-                        System.out.println("05 Identificador TK05");
-                        i++;
-                    } else {
-                        System.out.println("Error: Caracter inesperado en Import: " + actual);
-                        return false;
-                    }
-                }
+            if (palabraActual.equals(String.valueOf(cierre[0])) || palabraActual.equals(String.valueOf(cierre[1]))) {
+                System.out.println("03 Cierre TK03");
                 continue;
             }
-            if (palabraActual.equals(estado[0]) || palabraActual.equals(estado[1])) { // Estados
-                i++;
+            if (palabraActual.equals(String.valueOf(continuacion[0]))) {
+                System.out.println("04 Continuacion TK04");
+                continue;
+            }
+
+            // 2. Palabras Reservadas (Keywords)
+            if (palabraActual.equals(PR[0])) {
+                System.out.println("02 Import TK02");
+                continue;
+            }
+            if (palabraActual.equals(PR[1])) {
+                System.out.println("09 Clase TK09");
+                continue;
+            }
+            if (palabraActual.equals(PR[2])) {
+                System.out.println("10 Main TK10");
+                continue;
+            }
+            if (palabraActual.equals(PR[3])) {
+                System.out.println("11 New TK11");
+                continue;
+            }
+
+            if (palabraActual.equals(estado[0]) || palabraActual.equals(estado[1])) {
                 System.out.println("06 Estado TK06");
                 continue;
             }
-            while (i < Palabras.length) {
-                String actual = Palabras[i];
-                if (actual.equals(estadoInstancia[0])) {
-                    i++;
-                    System.out.println("07 Estado Instancia TK07");
-                } else if (actual.equals(TR[0]) || actual.equals(TR[1]) || actual.equals(TR[2]) || actual.equals(TR[3])
-                        || actual.equals(TR[4]) || actual.equals(TR[5])) {
-                    i++;
+            if (palabraActual.equals("Static")) {
+                System.out.println("07 Estado Instancia TK07");
+                continue;
+            }
+            String[] TR = { "Int", "String", "Double", "Char", "Boolean", "Void" };
+            boolean esTR = false;
+            for (String t : TR) {
+                if (palabraActual.equals(t)) {
                     System.out.println("08 Tipo de retorno TK08");
-                    if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                        System.out.println("Error");
-                        return false;
-                    } else {
-                        System.out.println("05 Identificador TK05");
-                        i++;
-                    } // Aqui antigravity me esta hacido SPOILERS, pero no entiendo poruqe quiere
-                      // poner le puto if aqui
-                } else {
+                    esTR = true;
                     break;
                 }
             }
-            i++;
+            if (esTR)
+                continue;
+
+            // 5. Identificadores
+            if (validarIde(palabraActual)) {
+                System.out.println("05 Identificador TK05");
+                continue;
+            }
+
+            // Si no es nada de lo anterior, es un error léxico
+            System.out.println("Error: '" + palabraActual + "' no es un componente valido");
+            return false;
         }
         return true;
     }
