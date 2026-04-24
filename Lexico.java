@@ -1,7 +1,63 @@
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Lexico {
+    private static final Map<String, String> TABLA_TOKENS = new HashMap<>();
+
+    static {
+        TABLA_TOKENS.put("{", "01 Apertura TK01");
+        TABLA_TOKENS.put("Import", "02 Import TK02");
+        TABLA_TOKENS.put("}", "03 CierreCor TK03");
+        TABLA_TOKENS.put(";", "04 Cierre TK04");
+        TABLA_TOKENS.put(".", "05 Continuacion TK05");
+        TABLA_TOKENS.put("Public", "06 Estado1 TK06");
+        TABLA_TOKENS.put("Private", "07 Estado2 TK07");
+        TABLA_TOKENS.put("Static", "08 Estado Instancia TK08");
+        TABLA_TOKENS.put("Class", "09 Clase TK09");
+        TABLA_TOKENS.put("Main", "10 Main TK10");
+        TABLA_TOKENS.put("New", "11 New TK11");
+        TABLA_TOKENS.put("Int", "12 Int TK12");
+        TABLA_TOKENS.put("String", "13 String TK13");
+        TABLA_TOKENS.put("Double", "14 Double TK14");
+        TABLA_TOKENS.put("Char", "15 Char TK15");
+        TABLA_TOKENS.put("Boolean", "16 Boolean TK16");
+        TABLA_TOKENS.put("Void", "17 Void TK17");
+        TABLA_TOKENS.put("(", "18 ParentesisApertura TK18");
+        TABLA_TOKENS.put(")", "19 ParentesisCierre TK19");
+        TABLA_TOKENS.put("[", "20 CorcheteApertura TK20");
+        TABLA_TOKENS.put("]", "21 CorcheteCierre TK21");
+        TABLA_TOKENS.put(",", "22 Coma TK22");
+        TABLA_TOKENS.put(".", "23 Punto TK23");
+        TABLA_TOKENS.put(":", "24 DosPuntos TK24");
+        TABLA_TOKENS.put(";", "25 PuntoYComa TK25");
+        TABLA_TOKENS.put("=", "26 Igual TK26");
+        TABLA_TOKENS.put("+", "27 Mas TK27");
+        TABLA_TOKENS.put("-", "28 Menos TK28");
+        TABLA_TOKENS.put("*", "29 Asterisco TK29");
+        TABLA_TOKENS.put("/", "30 Diagonal TK30");
+        TABLA_TOKENS.put("%", "31 Porcentaje TK31");
+        TABLA_TOKENS.put("<", "32 MenorQue TK32");
+        TABLA_TOKENS.put(">", "33 MayorQue TK33");
+        TABLA_TOKENS.put(" ", "34 Espacio TK34");
+        TABLA_TOKENS.put("\n", "35 Salto De Linea TK35");
+        TABLA_TOKENS.put("\t", "36 Tabulador TK36");
+
+        TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("private", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("static", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("class", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("main", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("new", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("int", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("string", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("double", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("char", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("boolean", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("void", "0 ERROR TK_ERROR");
+    }
     // No recuerdo como es el orden de los archivos que nos pidio
     // Silerio, asi que si hay algo que dividir o asi lo vemos y corregimos
 
@@ -31,111 +87,35 @@ public class Lexico {
             }
         }
 
-        String[] Palabras = codigo.toString().split(" |\n");
+        String[] Palabras = codigo.toString().split("(?<=[ \n])|(?=[ \n])");
 
         String codigoCompleto = codigo.toString();
         // System.out.println(codigoCompleto);
         if (evaluar(Palabras)) {// Pedo del booleand
-            System.out.println("Es una palabra reservada");
+            System.out.println("Todo Bien");
         } else {
-            System.out.println("No es una palabra reservada");
-        } // Por que no deja de mamar la vrg que no se usa el pinche metodo
+            System.out.println("Algo Mal");
+        }
     }
 
     private static boolean evaluar(String[] Palabras) {
-        // Simbolos permitidos
-        char[] letraMin = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-        char[] letraMay = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-                'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-        int[] digitos = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        String apertura = "{"; // los que son solo 1 cosa... lo sigo manejando
-        char[] cierre = { '}', ';' }; // como una matriz ?? o como en estados?
-        char[] continuacion = { '.' };
-        char[] gramaticales = { '[', ']', '(', ')', '<', '>' };
-        char[] matematicos = { '+', '-', '*', '/', '%', '=' };
+        for (int i = 0; i < Palabras.length; i++) {
+            String palabraActual = Palabras[i]; // No usamos trim aquí para no perder los espacios
 
-        // Palabras Reservadas
-        String[] PR = { "Import", "Class", "Main", "New" };
-        // Tipo de retorno
-        String[] TR = { "Int", "String", "Double", "Char", "Boolean", "Void" };
-
-        // Estados
-        String[] estado = { "Public", "Private" };
-        String[] estadoInstancia = { "Static" };
-        // Condicionales
-        String If = "If";
-        String Else = "Else";
-        String Exist = "Exist";
-        boolean esValido = true;
-
-        int i = 0;
-        while (i < Palabras.length) {
-            String palabraActual = Palabras[i];
-            if (palabraActual.equals(apertura)) {
-                i++;
-                System.out.println("01 Apertura TK01");
+            if (palabraActual.isEmpty() || palabraActual.equals("\n"))
+                continue;
+            String infoToken = TABLA_TOKENS.get(palabraActual);
+            if (infoToken != null) {
+                System.out.println(infoToken);
                 continue;
             }
 
-            if (palabraActual.equals(PR[0])) { // Import
-                i++;
-                System.out.println("02 Import TK02");
-                if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                    System.out.println("Error");
-                    return false;
-                }
+            if (validarIde(palabraActual)) {
                 System.out.println("05 Identificador TK05");
-                i++;
-                while (i < Palabras.length) {
-                    String actual = Palabras[i];
-                    if (actual.equals(String.valueOf(cierre[1]))) { // ';'
-                        i++;
-                        System.out.println("03 Cierre TK03");
-                        break;
-                    } else if (actual.equals(String.valueOf(continuacion[0]))) { // '.'
-                        i++;
-                        System.out.println("04 Continuacion TK04");
-                        if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                            System.out.println("Error");
-                            return false;
-                        }
-                        System.out.println("05 Identificador TK05");
-                        i++;
-                    } else {
-                        System.out.println("Error: Caracter inesperado en Import: " + actual);
-                        return false;
-                    }
-                }
                 continue;
             }
-            if (palabraActual.equals(estado[0]) || palabraActual.equals(estado[1])) { // Estados
-                i++;
-                System.out.println("06 Estado TK06");
-                continue;
-            }
-            while (i < Palabras.length) {
-                String actual = Palabras[i];
-                if (actual.equals(estadoInstancia[0])) {
-                    i++;
-                    System.out.println("07 Estado Instancia TK07");
-                } else if (actual.equals(TR[0]) || actual.equals(TR[1]) || actual.equals(TR[2]) || actual.equals(TR[3])
-                        || actual.equals(TR[4]) || actual.equals(TR[5])) {
-                    i++;
-                    System.out.println("08 Tipo de retorno TK08");
-                    if (i >= Palabras.length || !validarIde(Palabras[i])) {
-                        System.out.println("Error");
-                        return false;
-                    } else {
-                        System.out.println("05 Identificador TK05");
-                        i++;
-                    } // Aqui antigravity me esta hacido SPOILERS, pero no entiendo poruqe quiere
-                      // poner le puto if aqui
-                } else {
-                    break;
-                }
-            }
-            i++;
+            System.out.println("Error: '" + palabraActual + "' no es un componente valido");
+            return false;
         }
         return true;
     }
