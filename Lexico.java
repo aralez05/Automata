@@ -44,6 +44,9 @@ public class Lexico {
         TABLA_TOKENS.put("\n", "35 Salto De Linea TK35");
         TABLA_TOKENS.put("\t", "34 Espacio TK34");
         TABLA_TOKENS.put("\"", "36 Comillas TK36");
+        TABLA_TOKENS.put("System", "37 System TK37");
+        TABLA_TOKENS.put("Out", "38 Out TK38");
+        TABLA_TOKENS.put("Println", "39 Println TK39");
 
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
@@ -58,6 +61,9 @@ public class Lexico {
         TABLA_TOKENS.put("char", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("boolean", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("void", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("System", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("out", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("println", "0 ERROR TK_ERROR");
     }
     // No recuerdo como es el orden de los archivos que nos pidio
     // Silerio, asi que si hay algo que dividir o asi lo vemos y corregimos
@@ -109,7 +115,7 @@ public class Lexico {
             if (palabraActual.isEmpty() || palabraActual.equals("\n"))
                 continue;
 
-            // Si encontramos una comilla, invertimos el estado de 'enCadena'
+            // Si encontramos una c"omilla, invertimos el estado de 'enCadena'
             if (palabraActual.equals("\"")) {
                 System.out.println(TABLA_TOKENS.get("\""));
                 enCadena = !enCadena;
