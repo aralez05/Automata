@@ -42,7 +42,11 @@ public class Lexico {
         TABLA_TOKENS.put(">", "33 MayorQue TK33");
         TABLA_TOKENS.put(" ", "34 Espacio TK34");
         TABLA_TOKENS.put("\n", "35 Salto De Linea TK35");
-        TABLA_TOKENS.put("\t", "36 Tabulador TK36");
+        TABLA_TOKENS.put("\t", "34 Espacio TK34");
+        TABLA_TOKENS.put("\"", "36 Comillas TK36");
+        TABLA_TOKENS.put("System", "37 System TK37");
+        TABLA_TOKENS.put("Out", "38 Out TK38");
+        TABLA_TOKENS.put("Println", "39 Println TK39");
 
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
@@ -57,6 +61,9 @@ public class Lexico {
         TABLA_TOKENS.put("char", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("boolean", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("void", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("System", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("out", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("println", "0 ERROR TK_ERROR");
     }
     // No recuerdo como es el orden de los archivos que nos pidio
     // Silerio, asi que si hay algo que dividir o asi lo vemos y corregimos
@@ -87,8 +94,9 @@ public class Lexico {
             }
         }
 
-        String[] Palabras = codigo.toString().split("(?<=[ \n])|(?=[ \n])");
-
+        String[] Palabras = codigo.toString().split(
+                "(?<=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"])|(?=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"])");
+        // Convulcione un poco
         String codigoCompleto = codigo.toString();
         // System.out.println(codigoCompleto);
         if (evaluar(Palabras)) {// Pedo del booleand
@@ -99,11 +107,27 @@ public class Lexico {
     }
 
     private static boolean evaluar(String[] Palabras) {
+        boolean enCadena = false;
+
         for (int i = 0; i < Palabras.length; i++) {
-            String palabraActual = Palabras[i]; // No usamos trim aquí para no perder los espacios
+            String palabraActual = Palabras[i];
 
             if (palabraActual.isEmpty() || palabraActual.equals("\n"))
                 continue;
+
+            // Si encontramos una c"omilla, invertimos el estado de 'enCadena'
+            if (palabraActual.equals("\"")) {
+                System.out.println(TABLA_TOKENS.get("\""));
+                enCadena = !enCadena;
+                continue;
+            }
+
+            // Si el interruptor está encendido, todo es un token de cadena
+            if (enCadena) {
+                System.out.println("37 Cadena TK37");
+                continue;
+            }
+
             String infoToken = TABLA_TOKENS.get(palabraActual);
             if (infoToken != null) {
                 System.out.println(infoToken);
@@ -114,6 +138,7 @@ public class Lexico {
                 System.out.println("05 Identificador TK05");
                 continue;
             }
+
             System.out.println("Error: '" + palabraActual + "' no es un componente valido");
             return false;
         }
