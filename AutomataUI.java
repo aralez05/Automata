@@ -161,12 +161,14 @@ public class AutomataUI {
     public static String evaluarConAutomata(String palabra) {
         // int[][] matriz = {{...}, {...}};
         // Aquí iterarías sobre las letras de la palabra
-
-        // Simulación temporal:
-        if (palabra.toLowerCase().equals("error") || palabra.matches(".*\\d.*")) {
-            return "INCORRECTO";
+        String[] PR = { "Import", "Class", "Main", "New" };
+        String apertura = "{"; // los que son solo 1 cosa... lo sigo manejando
+        char[] cierre = { '}', ';' }; //
+        if (palabra.toLowerCase().equals(apertura)) { // Import{}
+            return "CORRECTO";
         }
-        return "CORRECTO";
+        return "INCORRECTO";
+
     }
 
     public static void main(String[] args) {
