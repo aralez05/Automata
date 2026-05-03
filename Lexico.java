@@ -48,22 +48,6 @@ public class Lexico {
         TABLA_TOKENS.put("Out", "38 Out TK38");
         TABLA_TOKENS.put("Println", "39 Println TK39");
 
-        TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("private", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("static", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("class", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("main", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("new", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("int", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("string", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("double", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("char", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("boolean", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("void", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("System", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("out", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("println", "0 ERROR TK_ERROR");
     }
     // No recuerdo como es el orden de los archivos que nos pidio
     // Silerio, asi que si hay algo que dividir o asi lo vemos y corregimos
@@ -115,14 +99,11 @@ public class Lexico {
             if (palabraActual.isEmpty() || palabraActual.equals("\n"))
                 continue;
 
-            // Si encontramos una c"omilla, invertimos el estado de 'enCadena'
             if (palabraActual.equals("\"")) {
                 System.out.println(TABLA_TOKENS.get("\""));
                 enCadena = !enCadena;
                 continue;
             }
-
-            // Si el interruptor está encendido, todo es un token de cadena
             if (enCadena) {
                 System.out.println("37 Cadena TK37");
                 continue;
@@ -132,6 +113,15 @@ public class Lexico {
             if (infoToken != null) {
                 System.out.println(infoToken);
                 continue;
+            }
+
+            if (!palabraActual.isEmpty() && Character.isLowerCase(palabraActual.charAt(0))) {
+                String palabraCapitalizada = Character.toUpperCase(palabraActual.charAt(0))
+                        + palabraActual.substring(1);
+                if (TABLA_TOKENS.containsKey(palabraCapitalizada)) {
+                    System.out.println("0 ERROR TK_ERROR");
+                    continue;
+                }
             }
 
             if (validarIde(palabraActual)) {
