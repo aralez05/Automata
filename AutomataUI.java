@@ -65,9 +65,69 @@ public class AutomataUI {
         TABLA_TOKENS.put("\n", "35 Salto De Linea TK35");
         TABLA_TOKENS.put("\t", "34 Espacio TK34");
         TABLA_TOKENS.put("\"", "36 Comillas TK36");
-        TABLA_TOKENS.put("System", "37 System TK37");
-        TABLA_TOKENS.put("Out", "38 Out TK38");
-        TABLA_TOKENS.put("Println", "39 Println TK39");
+        TABLA_TOKENS.put("System", "38 System TK38");
+        TABLA_TOKENS.put("Out", "39 Out TK39");
+        TABLA_TOKENS.put("Println", "42 Println TK42");
+        TABLA_TOKENS.put("#", "40 Println TK40");
+        TABLA_TOKENS.put("Abstract", "43 Abstract TK43");
+        TABLA_TOKENS.put("Assert", "44 Assert TK44");
+        TABLA_TOKENS.put("Break", "45 Break TK45");
+        TABLA_TOKENS.put("Byte", "46 Byte TK46");
+        TABLA_TOKENS.put("Case", "47 Case TK47");
+        TABLA_TOKENS.put("Catch", "48 Catch TK48");
+        TABLA_TOKENS.put("Const", "49 Const TK49");
+        TABLA_TOKENS.put("Continue", "50 Continue TK50");
+        TABLA_TOKENS.put("Default", "51 Default TK51");
+        TABLA_TOKENS.put("Do", "52 Do TK52");
+        TABLA_TOKENS.put("Else", "53 Else TK53");
+        TABLA_TOKENS.put("Enum", "54 Enum TK54");
+        TABLA_TOKENS.put("Exports", "55 Exports TK55");
+        TABLA_TOKENS.put("Extends", "56 Extends TK56");
+        TABLA_TOKENS.put("False", "57 False TK57");
+        TABLA_TOKENS.put("Final", "58 Final TK58");
+        TABLA_TOKENS.put("Finally", "59 Finally TK59");
+        TABLA_TOKENS.put("Float", "60 Float TK60");
+        TABLA_TOKENS.put("For", "61 For TK61");
+        TABLA_TOKENS.put("Goto", "62 Goto TK62");
+        TABLA_TOKENS.put("If", "63 If TK63");
+        TABLA_TOKENS.put("Implements", "64 Implements TK64");
+        TABLA_TOKENS.put("Instanceof", "65 Instanceof TK65");
+        TABLA_TOKENS.put("Interface", "66 Interface TK66");
+        TABLA_TOKENS.put("Long", "67 Long TK67");
+        TABLA_TOKENS.put("Module", "68 Module TK68");
+        TABLA_TOKENS.put("Native", "69 Native TK69");
+        TABLA_TOKENS.put("Non-sealed", "70 NonSealed TK70");
+        TABLA_TOKENS.put("Null", "71 Null TK71");
+        TABLA_TOKENS.put("Open", "72 Open TK72");
+        TABLA_TOKENS.put("Opens", "73 Opens TK73");
+        TABLA_TOKENS.put("Package", "74 Package TK74");
+        TABLA_TOKENS.put("Permits", "75 Permits TK75");
+        TABLA_TOKENS.put("Provides", "76 Provides TK76");
+        TABLA_TOKENS.put("Record", "77 Record TK77");
+        TABLA_TOKENS.put("Requires", "78 Requires TK78");
+        TABLA_TOKENS.put("Return", "79 Return TK79");
+        TABLA_TOKENS.put("Sealed", "80 Sealed TK80");
+        TABLA_TOKENS.put("Short", "81 Short TK81");
+        TABLA_TOKENS.put("Strictfp", "82 Strictfp TK82");
+        TABLA_TOKENS.put("Super", "83 Super TK83");
+        TABLA_TOKENS.put("Switch", "84 Switch TK84");
+        TABLA_TOKENS.put("Synchronized", "85 Synchronized TK85");
+        TABLA_TOKENS.put("This", "86 This TK86");
+        TABLA_TOKENS.put("Throw", "87 Throw TK87");
+        TABLA_TOKENS.put("Throws", "88 Throws TK88");
+        TABLA_TOKENS.put("To", "89 To TK89");
+        TABLA_TOKENS.put("Transient", "90 Transient TK90");
+        TABLA_TOKENS.put("Transitive", "91 Transitive TK91");
+        TABLA_TOKENS.put("True", "92 True TK92");
+        TABLA_TOKENS.put("Try", "93 Try TK93");
+        TABLA_TOKENS.put("Uses", "94 Uses TK94");
+        TABLA_TOKENS.put("Var", "95 Var TK95");
+        TABLA_TOKENS.put("Volatile", "96 Volatile TK96");
+        TABLA_TOKENS.put("When", "97 When TK97");
+        TABLA_TOKENS.put("While", "98 While TK98");
+        TABLA_TOKENS.put("With", "99 With TK99");
+        TABLA_TOKENS.put("Yield", "100 Yield TK100");
+        TABLA_TOKENS.put("_", "101 GuionBajo TK101");
 
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
@@ -82,9 +142,36 @@ public class AutomataUI {
         TABLA_TOKENS.put("char", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("boolean", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("void", "0 ERROR TK_ERROR");
-        TABLA_TOKENS.put("System", "0 ERROR TK_ERROR");
+        TABLA_TOKENS.put("system", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("out", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("println", "0 ERROR TK_ERROR");
+    }
+
+    public static boolean esError(String palabra) {
+        if (palabra == null || palabra.isEmpty())
+            return false;
+
+        switch (palabra) {
+            case "import":
+            case "public":
+            case "private":
+            case "static":
+            case "class":
+            case "main":
+            case "new":
+            case "int":
+            case "string":
+            case "double":
+            case "char":
+            case "boolean":
+            case "void":
+            case "system":
+            case "out":
+            case "println":
+                return true;
+            default:
+                return false;
+        }
     }
 
     public static boolean esPalabraReservada(String palabra) {
@@ -92,46 +179,118 @@ public class AutomataUI {
             return false;
 
         switch (palabra) {
-            case "Import":
-            case "Public":
-            case "Private":
-            case "Static":
-            case "Class":
-            case "Main":
-            case "New":
-            case "Int":
-            case "String":
-            case "Double":
-            case "Char":
+            case "Abstract":
+            case "Assert":
             case "Boolean":
+            case "Break":
+            case "Byte":
+            case "Case":
+            case "Catch":
+            case "Char":
+            case "Class":
+            case "Const":
+            case "Continue":
+            case "Default":
+            case "Do":
+            case "Double":
+            case "Else":
+            case "Enum":
+            case "Exports":
+            case "Extends":
+            case "False":
+            case "Final":
+            case "Finally":
+            case "Float":
+            case "For":
+            case "Goto":
+            case "If":
+            case "Implements":
+            case "Import":
+            case "Instanceof":
+            case "Int":
+            case "Interface":
+            case "Long":
+            case "Module":
+            case "Native":
+            case "New":
+            case "Non-sealed":
+            case "Null":
+            case "Open":
+            case "Opens":
+            case "Package":
+            case "Permits":
+            case "Private":
+            case "Protected":
+            case "Provides":
+            case "Public":
+            case "Record":
+            case "Requires":
+            case "Return":
+            case "Sealed":
+            case "Short":
+            case "Static":
+            case "Strictfp":
+            case "Super":
+            case "Switch":
+            case "Synchronized":
+            case "This":
+            case "Throw":
+            case "Throws":
+            case "To":
+            case "Transient":
+            case "Transitive":
+            case "True":
+            case "Try":
+            case "Uses":
+            case "Var":
             case "Void":
-            case "System":
-            case "Out":
-            case "Println":
+            case "Volatile":
+            case "When":
+            case "While":
+            case "With":
+            case "Yield":
+            case "_":
                 return true;
             default:
                 return false;
         }
     }
 
-    private static String AsignarTokens(String palabra) {
-        boolean enCadena = false;
+    private static boolean Comentario(String palabra, Boolean EnComentario) {
+        if (palabra.equals("#")) {
+            System.out.println(TABLA_TOKENS.get("\""));
+            EnComentario = !EnComentario;
+
+        }
+        return EnComentario;
+    }
+
+    private static Boolean EsComilla(String palabra, Boolean EnCadena) {
+        if (palabra.equals("\"")) {
+            System.out.println(TABLA_TOKENS.get("\""));
+            EnCadena = !EnCadena;
+
+        }
+        return EnCadena;
+    }
+
+    private static String AsignarTokens(String palabra, boolean enCadena, boolean comentario) {
+
         String infoToken;
         if (palabra.isEmpty() || palabra.equals("\n"))
             return null;
-
-        // Si encontramos una comilla, invertimos el estado de 'enCadena'
-        if (palabra.equals("\"")) {
-            System.out.println(TABLA_TOKENS.get("\""));
-            enCadena = !enCadena;
-
+        if (comentario == true && !palabra.equals("#")) {
+            infoToken = "41 Comenatrios TK41";
+            System.out.println("41 Comenatrios TK41");
+            return infoToken;
         }
-
         // Si el interruptor está encendido, todo es un token de cadena
-        if (enCadena) {
+        if (enCadena == true && !palabra.equals("\"")) {
+
             infoToken = "37 Cadena TK37";
 
             System.out.println("37 Cadena TK37");
+            return infoToken;
         }
 
         infoToken = TABLA_TOKENS.get(palabra);
@@ -139,6 +298,13 @@ public class AutomataUI {
             System.out.println(infoToken);
         }
         if (esPalabraReservada(palabra)) {
+            infoToken = TABLA_TOKENS.get(palabra);
+            if (infoToken != null) {
+                System.out.println(infoToken);
+                return infoToken;
+            }
+
+        } else if (esError(palabra)) {
             infoToken = TABLA_TOKENS.get(palabra);
             if (infoToken != null) {
                 System.out.println(infoToken);
@@ -209,24 +375,38 @@ public class AutomataUI {
                 String textoCompleto = cuadroTexto.getText();
                 doc.setCharacterAttributes(0, textoCompleto.length(), estiloNormal, true);
 
-                String[] palabras = textoCompleto.split("\\s+");
+                String[] Palabras = textoCompleto.split(
+                        "(?<=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#])|(?=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#])");
                 int indiceActual = 0;
                 // Reiniciamos al empezar a leer el texto
 
                 // ESTA ES TU "MATRIZ" DINÁMICA
                 List<String[]> matrizTokens = new ArrayList<>();
-
-                for (String palabra : palabras) {
+                Boolean Cadena = false;
+                Boolean Coment = false;
+                for (String palabra : Palabras) {
                     if (palabra.isEmpty())
                         continue;
 
                     indiceActual = textoCompleto.indexOf(palabra, indiceActual);
-                    String token = AsignarTokens(palabra);
+                    if (Cadena == false) {
+                        Coment = Comentario(palabra, Coment);
+                    }
+                    if (Coment == false) {
+                        Cadena = EsComilla(palabra, Cadena);
+                    }
+                    System.out.println(Cadena);
+                    String token = AsignarTokens(palabra, Cadena, Coment);
 
                     // GUARDAR EN LA MATRIZ: [Palabra, Token]
                     matrizTokens.add(new String[] { palabra, token });
+                    if (token == null || "41 Comenatrios TK41".equals(token)) {
 
-                    if ("02 Import TK02".equals(token)) {
+                        doc.setCharacterAttributes(indiceActual, palabra.length(), estiloTexto,
+                                true);
+                    }
+
+                    if (token == null || "0 ERROR TK_ERROR".equals(token)) {
 
                         doc.setCharacterAttributes(indiceActual, palabra.length(), estiloError,
                                 true);
