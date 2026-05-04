@@ -68,7 +68,7 @@ public class AutomataUI {
         TABLA_TOKENS.put("System", "38 System TK38");
         TABLA_TOKENS.put("Out", "39 Out TK39");
         TABLA_TOKENS.put("Println", "42 Println TK42");
-        TABLA_TOKENS.put("#", "40 Println TK40");
+        TABLA_TOKENS.put("#", "40 Numeral TK40");
         TABLA_TOKENS.put("Abstract", "43 Abstract TK43");
         TABLA_TOKENS.put("Assert", "44 Assert TK44");
         TABLA_TOKENS.put("Break", "45 Break TK45");
@@ -128,7 +128,8 @@ public class AutomataUI {
         TABLA_TOKENS.put("With", "99 With TK99");
         TABLA_TOKENS.put("Yield", "100 Yield TK100");
         TABLA_TOKENS.put("_", "101 GuionBajo TK101");
-
+        TABLA_TOKENS.put("\'", "102 ComillaSimple TK102");
+        
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("private", "0 ERROR TK_ERROR");
@@ -265,6 +266,14 @@ public class AutomataUI {
         return EnComentario;
     }
 
+    private static Boolean EsComillaSimple(String palabra, Boolean enCadenaSimple) {
+        if (palabra.equals("\'")) {
+            System.out.println(TABLA_TOKENS.get("\'"));
+            enCadenaSimple = !enCadenaSimple;
+        }
+        return enCadenaSimple;
+    }
+
     private static Boolean EsComilla(String palabra, Boolean EnCadena) {
         if (palabra.equals("\"")) {
             System.out.println(TABLA_TOKENS.get("\""));
@@ -274,21 +283,28 @@ public class AutomataUI {
         return EnCadena;
     }
 
-    private static String AsignarTokens(String palabra, boolean enCadena, boolean comentario) {
+    private static String AsignarTokens(String palabra, boolean enCadena, boolean comentario, boolean enCadenaSimple) {
 
         String infoToken;
         if (palabra.isEmpty() || palabra.equals("\n"))
             return null;
+        
         if (comentario == true && !palabra.equals("#")) {
             infoToken = "41 Comenatrios TK41";
             System.out.println("41 Comenatrios TK41");
             return infoToken;
         }
+
+        // Si el interruptor está encendido, todo es un token de cadena
+        if (enCadenaSimple == true && !palabra.equals("\'")) {
+            infoToken = "102 CadenaSimple TK102";
+            System.out.println("102 Cadena TK102");
+            return infoToken;
+        }
+
         // Si el interruptor está encendido, todo es un token de cadena
         if (enCadena == true && !palabra.equals("\"")) {
-
             infoToken = "37 Cadena TK37";
-
             System.out.println("37 Cadena TK37");
             return infoToken;
         }
@@ -383,20 +399,25 @@ public class AutomataUI {
                 // ESTA ES TU "MATRIZ" DINÁMICA
                 List<String[]> matrizTokens = new ArrayList<>();
                 Boolean Cadena = false;
+                Boolean CadenaSimple = false;
                 Boolean Coment = false;
                 for (String palabra : Palabras) {
                     if (palabra.isEmpty())
                         continue;
 
                     indiceActual = textoCompleto.indexOf(palabra, indiceActual);
-                    if (Cadena == false) {
+                    if ((CadenaSimple == false)&&(Cadena == false)) {
                         Coment = Comentario(palabra, Coment);
                     }
-                    if (Coment == false) {
+                    if ((Coment == false)&&(CadenaSimple == false)) {
                         Cadena = EsComilla(palabra, Cadena);
                     }
+                    if ((Coment == false)&&(Cadena == false)) {
+                        CadenaSimple=EsComillaSimple(palabra, CadenaSimple);
+                    }
+                    
                     System.out.println(Cadena);
-                    String token = AsignarTokens(palabra, Cadena, Coment);
+                    String token = AsignarTokens(palabra, Cadena, Coment, CadenaSimple);
 
                     // GUARDAR EN LA MATRIZ: [Palabra, Token]
                     matrizTokens.add(new String[] { palabra, token });
