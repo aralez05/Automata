@@ -129,7 +129,7 @@ public class AutomataUI {
         TABLA_TOKENS.put("Yield", "100 Yield TK100");
         TABLA_TOKENS.put("_", "101 GuionBajo TK101");
         TABLA_TOKENS.put("\'", "102 ComillaSimple TK102");
-        
+
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("private", "0 ERROR TK_ERROR");
@@ -288,7 +288,7 @@ public class AutomataUI {
         String infoToken;
         if (palabra.isEmpty() || palabra.equals("\n"))
             return null;
-        
+
         if (comentario == true && !palabra.equals("#")) {
             infoToken = "41 Comenatrios TK41";
             System.out.println("41 Comenatrios TK41");
@@ -406,20 +406,19 @@ public class AutomataUI {
                         continue;
 
                     indiceActual = textoCompleto.indexOf(palabra, indiceActual);
-                    if ((CadenaSimple == false)&&(Cadena == false)) {
+                    if ((CadenaSimple == false) && (Cadena == false)) {
                         Coment = Comentario(palabra, Coment);
                     }
-                    if ((Coment == false)&&(CadenaSimple == false)) {
+                    if ((Coment == false) && (CadenaSimple == false)) {
                         Cadena = EsComilla(palabra, Cadena);
                     }
-                    if ((Coment == false)&&(Cadena == false)) {
-                        CadenaSimple=EsComillaSimple(palabra, CadenaSimple);
+                    if ((Coment == false) && (Cadena == false)) {
+                        CadenaSimple = EsComillaSimple(palabra, CadenaSimple);
                     }
-                    
+
                     System.out.println(Cadena);
                     String token = AsignarTokens(palabra, Cadena, Coment, CadenaSimple);
 
-                    // GUARDAR EN LA MATRIZ: [Palabra, Token]
                     matrizTokens.add(new String[] { palabra, token });
                     if (token == null || "41 Comenatrios TK41".equals(token)) {
 
@@ -436,8 +435,28 @@ public class AutomataUI {
                     indiceActual += palabra.length();
                 }
                 System.out.println("--- RESULTADOS ---");
-                for (String[] fila : matrizTokens) {
-                    System.out.println("Palabra: " + fila[0] + " | Token: " + fila[1]);
+                System.out.println("--------ID---------Valor--------TOKEN ingresado---------Token Siguiente--------");
+                for (int i = 0; i < matrizTokens.size(); i++) {
+                    String[] fila = matrizTokens.get(i);
+                    String palabra = fila[0].replace("\n", "\\n").replace("\t", "\\t");
+                    String tokenInfo = fila[1];
+                    
+                    String id = "-";
+                    String tokenIngresado = "-";
+                    String tokenSiguiente = "-";
+
+                    if (i + 1 < matrizTokens.size()) {
+                        String[] filaSiguiente = matrizTokens.get(i + 1);
+                        if (filaSiguiente[1] != null && !filaSiguiente[1].isEmpty()) {
+                            tokenSiguiente = filaSiguiente[1];
+                        }
+                    }
+
+                    if (tokenInfo != null && !tokenInfo.isEmpty()) {
+                        tokenIngresado = tokenInfo;
+                    }
+
+                    System.out.printf("        %-11s%-14s%-30s%-30s%n", id, palabra, tokenIngresado, tokenSiguiente);
                 }
                 System.out.println("------------------");
 
