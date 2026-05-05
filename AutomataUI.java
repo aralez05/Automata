@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import org.apache.poi.xssf.usermodel.*;
+import java.io.FileOutputStream;
 
 public class AutomataUI {
     private static boolean validarIde(String palabra) {
@@ -24,7 +26,56 @@ public class AutomataUI {
         }
         return true;
     }
+    // creacion del timer
+    private static javax.swing.Timer timer;
+    private static List<String[]> matrizTokensGlobal = new ArrayList<>();
+    // exportar la matriz a excel
+    public static void exportarExcel(List<String[]> matriz) {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
+            XSSFSheet sheet = workbook.createSheet("Tokens");
+
+            // encabezados
+            XSSFRow header = sheet.createRow(0);
+            header.createCell(0).setCellValue("ID");
+            header.createCell(1).setCellValue("Valor");
+            header.createCell(2).setCellValue("Token");
+            header.createCell(3).setCellValue("Siguiente");
+
+            int rowNum = 1;
+
+            for (int i = 0; i < matriz.size(); i++) {
+                String[] fila = matriz.get(i);
+
+                XSSFRow row = sheet.createRow(rowNum++);
+
+                String palabra = fila[0];
+                String token = fila[1];
+
+                String siguiente = "-";
+                if (i + 1 < matriz.size()) {
+                    String[] next = matriz.get(i + 1);
+                    if (next[1] != null) {
+                        siguiente = next[1];
+                    }
+                }
+
+                row.createCell(0).setCellValue(i);
+                row.createCell(1).setCellValue(palabra);
+                row.createCell(2).setCellValue(token != null ? token : "-");
+                row.createCell(3).setCellValue(siguiente);
+            }
+
+            FileOutputStream fileOut = new FileOutputStream("tokens.xlsx");
+            workbook.write(fileOut);
+            fileOut.close();
+
+            System.out.println("Excel generado correctamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private static final Map<String, String> TABLA_TOKENS = new HashMap<>();
 
     static {
@@ -129,7 +180,7 @@ public class AutomataUI {
         TABLA_TOKENS.put("Yield", "100 Yield TK100");
         TABLA_TOKENS.put("_", "101 GuionBajo TK101");
         TABLA_TOKENS.put("\'", "102 ComillaSimple TK102");
-        
+
         TABLA_TOKENS.put("import", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("public", "0 ERROR TK_ERROR");
         TABLA_TOKENS.put("private", "0 ERROR TK_ERROR");
@@ -286,9 +337,9 @@ public class AutomataUI {
     private static String AsignarTokens(String palabra, boolean enCadena, boolean comentario, boolean enCadenaSimple) {
 
         String infoToken;
-        if (palabra.isEmpty() || palabra.equals("\n"))
+        if (palabra.isEmpty())
             return null;
-        
+
         if (comentario == true && !palabra.equals("#")) {
             infoToken = "41 Comenatrios TK41";
             System.out.println("41 Comenatrios TK41");
@@ -354,6 +405,12 @@ public class AutomataUI {
     }
 
     public static void main(String[] args) {
+        // timer para exportar tabla
+        timer = new javax.swing.Timer(7000, e -> {
+            System.out.println("pausa");
+            //exportarExcel(matrizTokensGlobal);
+        });
+        timer.setRepeats(false);
         // 2. Crear la ventana
         JFrame frame = new JFrame("Interfaz en Java");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -388,14 +445,14 @@ public class AutomataUI {
             @Override
             public void keyReleased(KeyEvent e) {
                 StyledDocument doc = cuadroTexto.getStyledDocument();
-                String textoCompleto = cuadroTexto.getText();
+                String textoCompleto = cuadroTexto.getText().replace("\r", "");
                 doc.setCharacterAttributes(0, textoCompleto.length(), estiloNormal, true);
 
                 String[] Palabras = textoCompleto.split(
-                        "(?<=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#])|(?=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#])");
+                 "(?<=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#'])|(?=[\\s\\{\\}\\(\\)\\[\\]\\;\\,\\.\\:\\=\\+\\-\\*\\/\\%\\<\\>\\\"#'])");
                 int indiceActual = 0;
                 // Reiniciamos al empezar a leer el texto
-
+                    
                 // ESTA ES TU "MATRIZ" DINÁMICA
                 List<String[]> matrizTokens = new ArrayList<>();
                 Boolean Cadena = false;
@@ -404,43 +461,68 @@ public class AutomataUI {
                 for (String palabra : Palabras) {
                     if (palabra.isEmpty())
                         continue;
-
-                    indiceActual = textoCompleto.indexOf(palabra, indiceActual);
-                    if ((CadenaSimple == false)&&(Cadena == false)) {
+                    boolean esEspacio = palabra.equals(" ") || palabra.equals("\n") || palabra.equals("\t");
+                    String token = AsignarTokens(palabra, Cadena, Coment, CadenaSimple);
+                    int inicio = indiceActual;
+                    if (token == null || "0 ERROR TK_ERROR".equals(token)) {
+                        doc.setCharacterAttributes(inicio, palabra.length(), estiloError, true);
+                    }
+                    if ((CadenaSimple == false) && (Cadena == false)) {
                         Coment = Comentario(palabra, Coment);
                     }
-                    if ((Coment == false)&&(CadenaSimple == false)) {
+                    if ((Coment == false) && (CadenaSimple == false)) {
                         Cadena = EsComilla(palabra, Cadena);
                     }
-                    if ((Coment == false)&&(Cadena == false)) {
-                        CadenaSimple=EsComillaSimple(palabra, CadenaSimple);
+                    if ((Coment == false) && (Cadena == false)) {
+                        CadenaSimple = EsComillaSimple(palabra, CadenaSimple);
                     }
-                    
+
                     System.out.println(Cadena);
-                    String token = AsignarTokens(palabra, Cadena, Coment, CadenaSimple);
-
-                    // GUARDAR EN LA MATRIZ: [Palabra, Token]
+                    if (palabra.isEmpty()) {
+                        return; // o continue si estás en loop
+                    }
                     matrizTokens.add(new String[] { palabra, token });
-                    if (token == null || "41 Comenatrios TK41".equals(token)) {
-
-                        doc.setCharacterAttributes(indiceActual, palabra.length(), estiloTexto,
-                                true);
+                    if (!esEspacio) {
+                        if ("41 Comenatrios TK41".equals(token)) {
+                            doc.setCharacterAttributes(inicio, palabra.length(), estiloTexto, true);
+                        } else if (token == null || "0 ERROR TK_ERROR".equals(token)) {
+                            doc.setCharacterAttributes(inicio, palabra.length(), estiloError, true);
+                        }
                     }
-
-                    if (token == null || "0 ERROR TK_ERROR".equals(token)) {
-
-                        doc.setCharacterAttributes(indiceActual, palabra.length(), estiloError,
-                                true);
+                    if (palabra.equals("\n")) {
+                        indiceActual += 1; // fuerza avance correcto
+                    } else {
+                        indiceActual += palabra.length();
                     }
-
-                    indiceActual += palabra.length();
                 }
                 System.out.println("--- RESULTADOS ---");
-                for (String[] fila : matrizTokens) {
-                    System.out.println("Palabra: " + fila[0] + " | Token: " + fila[1]);
+                System.out.println("--------ID---------Valor--------TOKEN ingresado---------Token Siguiente--------");
+                for (int i = 0; i < matrizTokens.size(); i++) {
+                    String[] fila = matrizTokens.get(i);
+                    String palabra = fila[0].replace("\n", "\\n").replace("\t", "\\t");
+                    String tokenInfo = fila[1];
+                    
+                    String id = "-";
+                    String tokenIngresado = "-";
+                    String tokenSiguiente = "-";
+
+                    for (int j = i + 1; j < matrizTokens.size(); j++) {
+                        String[] filaSiguiente = matrizTokens.get(j);
+                        if (filaSiguiente[1] != null && !filaSiguiente[1].isEmpty()) {
+                            tokenSiguiente = filaSiguiente[1];
+                            break;
+                        }
+                    }
+                    if (tokenInfo != null && !tokenInfo.isEmpty()) {
+                        tokenIngresado = tokenInfo;
+                    }
+
+                    System.out.printf("        %-11s%-14s%-30s%-30s%n", id, palabra, tokenIngresado, tokenSiguiente);
                 }
                 System.out.println("------------------");
-
+                //reinicia el tiempo al presionar una tecla
+                matrizTokensGlobal = matrizTokens;
+                timer.restart(); 
             }
 
         });
